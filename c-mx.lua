@@ -66,10 +66,8 @@ local PALETTE_MX = {
 }
 ]]
 
-_G.CT_MX = _G.charSelect.character_add("MX", {"IT'S FUN, ISN'T IT?", "PLAYING AROUND HERE."}, "5UP34 and Razz", {r = 170, g = 0, b = 0}, E_MODEL_MX, CT_MARIO, TEX_MX, 1.3)
-_G.charSelect.character_add_caps(E_MODEL_MX, CAPTABLE_MX)
-_G.charSelect.character_add_voice(E_MODEL_MX, VOICETABLE_MX)
---_G.charSelect.character_add_palette_preset(E_MODEL_MX, PALETTE_MX)
+
+
 
 local function on_character_sound(m, sound)
     if _G.charSelect.character_get_voice(m) == VOICETABLE_MX then return _G.charSelect.voice.sound(m, sound) end
@@ -81,3 +79,99 @@ end
 
 hook_event(HOOK_CHARACTER_SOUND, on_character_sound)
 hook_event(HOOK_MARIO_UPDATE, on_character_snore)
+-- Cargar modelos y texturas (esto debería estar antes de la creación del NPC)
+local E_MODEL_MX = smlua_model_util_get_id("mx_geo")
+local TEX_MX = get_texture_info("icon_mx")
+
+-- Función para crear NPCs de *MX* en varias ubicaciones
+function spawn_multiple_mx_npcs()
+    local locations = {
+        {100, 0, 100},  -- Coordenadas 1
+        {200, 0, 200},  -- Coordenadas 2
+        {300, 0, 300}   -- Coordenadas 3
+    }
+    
+    for _, coords in ipairs(locations) do
+        local x, y, z = unpack(coords)
+        local mx_npc = create_npc(E_MODEL_MX, x, y, z)  -- Crea el NPC de *MX*
+        set_npc_behavior(mx_npc)  -- Define el comportamiento del NPC
+    end
+end
+
+-- Llamamos a la función para que *MX* aparezca en las ubicaciones especificadas al inicio del juego
+spawn_multiple_mx_npcs()
+-- Función para hacer que *MX* ataque al jugador cuando esté cerca
+function on_player_near_mx(player)
+    if is_near(player, mx_npc) then
+        -- Aquí podemos definir el comportamiento de ataque, como hacerle daño al jugador
+        -- Ejemplo: hacer que *MX* le dé un golpe al jugador
+        deal_damage_to_player(player, 10)  -- Daño de 10 al jugador (ajustar según sea necesario)
+        play_scary_sound("mx-kick.ogg")  -- Reproduce el sonido de ataque (puedes usar otro sonido)
+    end
+end
+
+-- Función que verifica si el jugador está cerca de *MX*
+function is_near(player, mx_npc)
+    local player_x, player_y, player_z = get_player_position(player)
+    local npc_x, npc_y, npc_z = get_npc_position(mx_npc)
+    
+    -- Compara las posiciones y verifica si el jugador está lo suficientemente cerca
+    local distance = math.sqrt((player_x - npc_x)^2 + (player_y - npc_y)^2 + (player_z - npc_z)^2)
+    
+    if distance < 50 then  -- Ajusta el rango de proximidad según lo necesites
+        return true
+    else
+        return false
+    end
+end
+-- Registrar el evento para que el ataque de *MX* se active cuando el jugador esté cerca
+hook_event(HOOK_PLAYER_UPDATE, on_player_near_mx)
+-- Cargar modelos y texturas (esto debería estar antes de la creación del NPC)
+local E_MODEL_MX = smlua_model_util_get_id("mx_geo")
+local TEX_MX = get_texture_info("icon_mx")
+
+-- Función para crear NPCs de *MX* en varias ubicaciones
+function spawn_multiple_mx_npcs()
+    local locations = {
+        {100, 0, 100},  -- Coordenadas 1
+        {200, 0, 200},  -- Coordenadas 2
+        {300, 0, 300}   -- Coordenadas 3
+    }
+    
+    for _, coords in ipairs(locations) do
+        local x, y, z = unpack(coords)
+        local mx_npc = create_npc(E_MODEL_MX, x, y, z)  -- Crea el NPC de *MX*
+        set_npc_behavior(mx_npc)  -- Define el comportamiento del NPC
+    end
+end
+
+-- Llamamos a la función para que *MX* aparezca en las ubicaciones especificadas al inicio del juego
+spawn_multiple_mx_npcs()
+
+-- Función para hacer que *MX* ataque al jugador cuando esté cerca
+function on_player_near_mx(player)
+    if is_near(player, mx_npc) then
+        -- Aquí podemos definir el comportamiento de ataque, como hacerle daño al jugador
+        -- Ejemplo: hacer que *MX* le dé un golpe al jugador
+        deal_damage_to_player(player, 10)  -- Daño de 10 al jugador (ajustar según sea necesario)
+        play_scary_sound("mx-kick.ogg")  -- Reproduce el sonido de ataque (puedes usar otro sonido)
+    end
+end
+
+-- Función que verifica si el jugador está cerca de *MX*
+function is_near(player, mx_npc)
+    local player_x, player_y, player_z = get_player_position(player)
+    local npc_x, npc_y, npc_z = get_npc_position(mx_npc)
+    
+    -- Compara las posiciones y verifica si el jugador está lo suficientemente cerca
+    local distance = math.sqrt((player_x - npc_x)^2 + (player_y - npc_y)^2 + (player_z - npc_z)^2)
+    
+    if distance < 50 then  -- Ajusta el rango de proximidad según lo necesites
+        return true
+    else
+        return false
+    end
+end
+
+-- Registrar el evento para que el ataque de *MX* se active cuando el jugador esté cerca
+hook_event(HOOK_PLAYER_UPDATE, on_player_near_mx)
